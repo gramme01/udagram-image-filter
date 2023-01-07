@@ -1,3 +1,4 @@
+import axios from 'axios';
 import fs from "fs";
 import Jimp = require("jimp");
 
@@ -10,20 +11,23 @@ import Jimp = require("jimp");
 //    an absolute path to a filtered image locally saved file
 export async function filterImageFromURL(inputURL: string): Promise<string> {
   return new Promise(async (resolve, reject) => {
-    try {
-      const photo = await Jimp.read(inputURL);
-      const outpath =
-        "/tmp/filtered." + Math.floor(Math.random() * 2000) + ".jpg";
-      await photo
-        .resize(256, 256) // resize
-        .quality(60) // set JPEG quality
-        .greyscale() // set greyscale
-        .write(__dirname + outpath, (img) => {
-          resolve(__dirname + outpath);
-        });
-    } catch (error) {
-      reject(error);
-    }
+    axios({
+      method: 'get',
+      url: inputURL,
+      responseType: 'arraybuffer',
+    })
+      .then(async ({ data: imageBuffer }) => {
+        const photo = await Jimp.read(imageBuffer);
+        const outpath =
+          "/tmp/filtered." + Math.floor(Math.random() * 2000) + ".jpg";
+        await photo
+          .resize(256, 256) // resize
+          .quality(60) // set JPEG quality
+          .greyscale() // set greyscale
+          .write(__dirname + outpath, (img) => {
+            resolve(__dirname + outpath);
+          });
+      }).catch(error => reject(error));
   });
 }
 
@@ -36,4 +40,16 @@ export async function deleteLocalFiles(files: Array<string>) {
   for (let file of files) {
     fs.unlinkSync(file);
   }
+}
+
+
+/**
+ * helper function to validate that a string is a url
+ * 
+ * @param {string} input - the string to be validated
+ * @returns {boolean} if input is a valid url
+ */
+export function isValidURL(input: string): boolean {
+  const url_regex = /^(http(s):\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/;
+  return url_regex.test(input);
 }
