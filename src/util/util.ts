@@ -9,11 +9,8 @@ import Jimp = require("jimp");
 //    inputURL: string - a publicly accessible url to an image file
 // RETURNS
 //    an absolute path to a filtered image locally saved file
-
-
 export async function filterImageFromURL(inputURL: string): Promise<string> {
   return new Promise(async (resolve, reject) => {
-
     axios({
       method: 'get',
       url: inputURL,
@@ -31,7 +28,6 @@ export async function filterImageFromURL(inputURL: string): Promise<string> {
             resolve(__dirname + outpath);
           });
       }).catch(error => reject(error));
-
   });
 }
 
