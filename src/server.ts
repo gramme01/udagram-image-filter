@@ -32,7 +32,10 @@ import bodyParser from 'body-parser';
     try {
       filtered_image_path = await filterImageFromURL(image_URL);
     } catch (error) {
-      return res.status(422).send("Unprocessable Entity! No image was returned from the Image URL");
+      return res.status(422).send({
+        message: "Unprocessable Entity! No image was returned from the Image URL",
+        error,
+      });
     }
 
     // send the filtered image and delete local files on the server
