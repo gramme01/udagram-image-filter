@@ -36,4 +36,17 @@ export async function deleteLocalFiles(files: Array<string>) {
   for (let file of files) {
     fs.unlinkSync(file);
   }
+  console.log("deleted");
+}
+
+
+/**
+ * helper function to validate that a string is a url
+ * 
+ * @param {string} input - the string to be validated
+ * @returns {boolean} if input is a valid url
+ */
+export function isValidURL(input: string): boolean {
+  const url_regex = /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/i;
+  return url_regex.test(input);
 }
